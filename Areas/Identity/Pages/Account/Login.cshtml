@@ -1,0 +1,103 @@
+﻿@page
+@model LoginModel
+@{
+    Layout = null;
+    ViewData["Title"] = "Log in";
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Log in</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" />
+    <link rel="stylesheet" href="~/css/mdbootstrap/mdb.min.css" />
+</head>
+<body>
+    <header>
+    </header>
+    <!--Footer-->
+    <section class="intro">
+        <div class="mask d-flex align-items-center h-100">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-md-4">
+                        <div class="card border border-info shadow-0 mb-3">
+                            <div class="card-header">
+                                Member Login
+                            </div>
+                            <img src="~/img/User.jpg" class="card-img-top" alt="..." />
+
+                            <div class="card-body p-5">
+                                <form id="account" method="post">
+                                    <div class="row d-flex align-items-center">
+                                        <div class="text-center mb-3">
+                                            <!-- Email input -->
+                                            <div class="form-outline mb-4">
+                                                <input asp-for="Input.Email" class="form-control" placeholder="email" />
+                                                <label class="form-label" for="typeEmail">Email</label>
+                                            </div>
+
+                                            <!-- Password input -->
+                                            <div class="form-outline mb-4">
+                                                <input asp-for="Input.Password" class="form-control" placeholder="password" />
+                                                <label class="form-label" for="typePassword">Password</label>
+                                            </div>
+
+                                            <!-- 2 column grid layout -->
+                                            <div class="row mb-4">
+                                                <div class="col-md-6 d-flex justify-content-center">
+                                                    <!-- Checkbox -->
+                                                    <div class="form-check mb-3 mb-md-0">
+                                                        <input class="form-check-input" type="checkbox" value="" id="loginCheck" checked />
+                                                        <label class="form-check-label" for="loginCheck">
+                                                            Remember me
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 d-flex justify-content-center">
+                                                    <!-- Simple link -->
+                                                    <a href="ForgotPassword">Forgot password?</a>
+                                                </div>
+                                            </div>
+                                            <button class="btn btn-primary btn-block mb-4" type="submit">Login</button>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer">
+                                        <!-- Register buttons -->
+                                        <div class="row d-flex align-items-center">
+                                            <!-- Simple link -->
+                                            <div class="text-center mb-3">
+                                                <a href="Register">Register?</a>
+                                            </div>
+                                        </div>
+                                        <div class="text-center">
+                                            <div asp-validation-summary="All" class="text-danger small"></div>
+                                            @{
+                                                if (Model.ShowResend)
+                                                {
+                                                    <p>
+                                                        <a asp-page="./UnconfirmedEmail" asp-route-userId="@Model.UserId">Resend verification?</a>
+                                                    </p>
+                                                }
+                                            }
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Modal -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+    <script src="~/js/mdb.min.js"></script>
+    @section Scripts {
+        <partial name="_ValidationScriptsPartial" />
+    }
+</body>
+</html>

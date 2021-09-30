@@ -1,0 +1,278 @@
+﻿@page "/BranchDetail/{MetricType}/{ID:long}"
+@using Blazorise;
+@using IIS_V4.Data;
+@using Microsoft.AspNetCore.Identity;
+@using BlazorDateRangePicker;
+@inject BranchService branchService;
+
+<AuthorizeView Policy="Branch" Resource="@ID">
+    <NotAuthorized>
+        <h2 class="mt-5">You are not authorized to view this page</h2>
+    </NotAuthorized>
+    <Authorized>
+
+        @if (!isAlreadyInitialised)
+        {
+            <div class="sk-cube-grid">
+                <div class="sk-cube sk-cube1"></div>
+                <div class="sk-cube sk-cube2"></div>
+                <div class="sk-cube sk-cube3"></div>
+                <div class="sk-cube sk-cube4"></div>
+                <div class="sk-cube sk-cube5"></div>
+                <div class="sk-cube sk-cube6"></div>
+                <div class="sk-cube sk-cube7"></div>
+                <div class="sk-cube sk-cube8"></div>
+                <div class="sk-cube sk-cube9"></div>
+            </div>
+        }
+        else
+        {
+            <Container Fluid="true" Padding="Padding.Is3.OnAll">
+                <div class="card border shadow-0 ">
+                    <div class="card-header bg-transparent">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <DateRangePicker Ranges="DateRanges" @ref="Picker">
+                                    <PickerTemplate Context="pickContext">
+                                        <div id="@pickContext.Id" @onclick="pickContext.Toggle" style="background: #fff; cursor: pointer; padding: .45rem 10px; border: 1px solid #ccc; border-radius: 5px;">
+                                            <i class="oi oi-calendar"></i>&nbsp;
+                                            <span>
+                                                @if (pickContext.TStartDate == null && pickContext.TEndDate == null)
+                                                {
+                                                    <span>Select dates...</span>
+                                                }
+                                                else if (pickContext.TStartDate != null && pickContext.TEndDate == null)
+                                                {
+                                                    if (pickContext.HoverDate > pickContext.TStartDate)
+                                                    {
+                                                        @($"{pickContext.TStartDate.Value.ToString(pickContext.DateFormat)} - {pickContext.HoverDate.Value.ToString(pickContext.DateFormat)}")
+
+                                                    }
+                                                    else
+                                                    {
+                                                        <span>@pickContext.TStartDate.Value.ToString("dd/MM/yyyy")</span>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <span>
+                                                        @pickContext.FormattedRange
+                                                    </span>
+                                                }
+                                            </span>
+                                        </div>
+                                    </PickerTemplate>
+                                </DateRangePicker>
+                            </div>
+                            <div class="col-md-4">
+                                <Button Clicked="@LoadCharts" Outline="true" id="ChartLoader">Load</Button>
+                            </div>
+                        </div>
+                    </div>
+                    @if (isLoading)
+                    {
+                        <div class="sk-cube-grid">
+                            <div class="sk-cube sk-cube1"></div>
+                            <div class="sk-cube sk-cube2"></div>
+                            <div class="sk-cube sk-cube3"></div>
+                            <div class="sk-cube sk-cube4"></div>
+                            <div class="sk-cube sk-cube5"></div>
+                            <div class="sk-cube sk-cube6"></div>
+                            <div class="sk-cube sk-cube7"></div>
+                            <div class="sk-cube sk-cube8"></div>
+                            <div class="sk-cube sk-cube9"></div>
+                        </div>
+                    }
+                    else
+                    {
+                        <Container Fluid="true" Padding="Padding.Is3.OnAll">
+                            @if (MetricType == "Takings")
+                            {
+                                <AuthorizeView Roles="Administrators">
+                                    <Authorized Context="Auth">
+                                        <div class="row mb-4">
+                                            <div class="col-sm-4">
+                                                <IIS_V4.Pages.Charts.LineTest></IIS_V4.Pages.Charts.LineTest>
+                                            </div>
+                                            @*<div class="col-sm-8">
+                                                    <VectorBlazor.Pages.Charts.TakingsTrend StartDate="@StartDate"
+                                                                                            EndDate="@EndDate"
+                                                                                            userBranchID="0"
+                                                                                            BranchName="All Stores">
+                                                    </VectorBlazor.Pages.Charts.TakingsTrend>
+                                                </div>*@
+                                        </div>
+                                        @*<div class="row mb-4">
+                                                <div class="col-sm-4">
+                                                    <VectorBlazor.Pages.Charts.DailyTakings StartDate="@StartDate"
+                                                                                            EndDate="@EndDate"
+                                                                                            userBranchID="ID"
+                                                                                            BranchName="@branchName"
+                                                                                            AutoRefresh="false">
+                                                    </VectorBlazor.Pages.Charts.DailyTakings>
+                                                </div>
+                                                <div class="col-sm-8">
+                                                    <VectorBlazor.Pages.Charts.TakingsTrend StartDate="@StartDate"
+                                                                                            EndDate="@EndDate"
+                                                                                            userBranchID="ID"
+                                                                                            BranchName="@branchName">
+                                                    </VectorBlazor.Pages.Charts.TakingsTrend>
+                                                </div>
+                                            </div>*@
+                                    </Authorized>
+                                    <NotAuthorized Context="Auth">
+                                        <div class="row mb-4">
+                                            <div class="col-sm-4">
+                                                <IIS_V4.Pages.Charts.LineTest></IIS_V4.Pages.Charts.LineTest>
+                                            </div>
+                                            @*<div class="col-sm-8">
+            <VectorBlazor.Pages.Charts.TakingsTrend StartDate="@StartDate"
+                                                    EndDate="@EndDate"
+                                                    userBranchID="ID"
+                                                    BranchName="@branchName">
+            </VectorBlazor.Pages.Charts.TakingsTrend>
+        </div>*@
+                                        </div>
+                                    </NotAuthorized>
+                                </AuthorizeView>
+                            }
+                            @*@if (MetricType == "LFL")
+                                {
+                                    <AuthorizeView Roles="Administrators">
+                                        <Authorized Context="Auth">
+                                            <div class="row mb-4">
+                                                <div class="col-sm-4">
+                                                    <VectorBlazor.Pages.Charts.LikeForLikeTakings StartDate="@StartDate"
+                                                                                                  EndDate="@EndDate"
+                                                                                                  userBranchID="0"
+                                                                                                  BranchName="All Stores"
+                                                                                                  AutoRefresh="false">
+                                                    </VectorBlazor.Pages.Charts.LikeForLikeTakings>
+                                                </div>
+
+                                                <div class="col-sm-8">
+                                                    <VectorBlazor.Pages.Charts.LikeForLikeTrend StartDate="@StartDate"
+                                                                                                EndDate="@EndDate"
+                                                                                                BranchName="All Stores"
+                                                                                                userBranchID="0">
+                                                    </VectorBlazor.Pages.Charts.LikeForLikeTrend>
+
+                                                </div>
+                                            </div>
+                                            <div class="row mb-4">
+                                                <div class="col-sm-4">
+                                                    <VectorBlazor.Pages.Charts.LikeForLikeTakings StartDate="@StartDate"
+                                                                                                  EndDate="@EndDate"
+                                                                                                  userBranchID="ID"
+                                                                                                  BranchName="@branchName"
+                                                                                                  AutoRefresh="false">
+                                                    </VectorBlazor.Pages.Charts.LikeForLikeTakings>
+                                                </div>
+                                                <div class="col-sm-8">
+                                                    <VectorBlazor.Pages.Charts.LikeForLikeTrend StartDate="@StartDate"
+                                                                                                EndDate="@EndDate"
+                                                                                                BranchName="@branchName"
+                                                                                                userBranchID="ID">
+                                                    </VectorBlazor.Pages.Charts.LikeForLikeTrend>
+                                                </div>
+                                            </div>
+                                        </Authorized>
+                                        <NotAuthorized Context="Auth">
+                                            <div class="row mb-4">
+                                                <div class="col-sm-4">
+                                                    <VectorBlazor.Pages.Charts.LikeForLikeTakings StartDate="@StartDate"
+                                                                                                  EndDate="@EndDate"
+                                                                                                  userBranchID="ID"
+                                                                                                  BranchName="@branchName"
+                                                                                                  AutoRefresh="false">
+                                                    </VectorBlazor.Pages.Charts.LikeForLikeTakings>
+                                                </div>
+
+                                                <div class="col-sm-8">
+                                                    <VectorBlazor.Pages.Charts.LikeForLikeTrend StartDate="@StartDate"
+                                                                                                EndDate="@EndDate"
+                                                                                                userBranchID="ID"
+                                                                                                BranchName="@branchName">
+                                                    </VectorBlazor.Pages.Charts.LikeForLikeTrend>
+                                                </div>
+                                            </div>
+                                        </NotAuthorized>
+                                    </AuthorizeView>
+                                }
+
+                                @if (MetricType == "Departments")
+                                {
+                                    <AuthorizeView Roles="Administrators">
+                                        <Authorized Context="Auth">
+                                            <div class="row mb-4">
+                                                <div class="col-sm-12">
+                                                    <VectorBlazor.Pages.Charts.DeptRanking StartDate="@StartDate"
+                                                                                           EndDate="@EndDate"
+                                                                                           userBranchID="0"
+                                                                                           BranchName="@branchName"
+                                                                                           AutoRefresh="false">
+                                                    </VectorBlazor.Pages.Charts.DeptRanking>
+                                                </div>
+                                            </div>
+                                        </Authorized>
+                                    </AuthorizeView>
+                                    <div class="row mb-4">
+                                        <div class="col-sm-12">
+                                            <VectorBlazor.Pages.Charts.DeptRanking StartDate="@StartDate"
+                                                                                   EndDate="@EndDate"
+                                                                                   userBranchID="ID"
+                                                                                   BranchName="@branchName"
+                                                                                   AutoRefresh="false">
+                                            </VectorBlazor.Pages.Charts.DeptRanking>
+                                        </div>
+                                    </div>
+                                }
+
+                                @if (MetricType == "Sales")
+                                {
+                                    <AuthorizeView Roles="Administrators">
+                                        <Authorized Context="Auth">
+                                            <div class="row mb-4">
+                                                <div class="col-sm-6">
+                                                    <VectorBlazor.Pages.Charts.SalesTrend StartDate="@StartDate"
+                                                                                            EndDate="@EndDate"
+                                                                                            userBranchID="0"
+                                                                                            BranchName="All Stores">
+                                                    </VectorBlazor.Pages.Charts.SalesTrend>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <VectorBlazor.Pages.Charts.SalesDetail StartDate="@StartDate"
+                                                                                            EndDate="@EndDate"
+                                                                                            userBranchID="0"
+                                                                                            BranchName="All Stores">
+                                                    </VectorBlazor.Pages.Charts.SalesDetail>
+                                                </div>
+                                            </div>
+                                        </Authorized>
+                                    </AuthorizeView>
+
+                                    <div class="row mb-4">
+                                        <div class="col-sm-6">
+                                            <VectorBlazor.Pages.Charts.SalesTrend StartDate="@StartDate"
+                                                                                    EndDate="@EndDate"
+                                                                                    userBranchID="ID"
+                                                                                    BranchName="@branchName">
+                                            </VectorBlazor.Pages.Charts.SalesTrend>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <VectorBlazor.Pages.Charts.SalesDetail StartDate="@StartDate"
+                                                                                    EndDate="@EndDate"
+                                                                                    userBranchID="ID"
+                                                                                    BranchName="@branchName">
+                                            </VectorBlazor.Pages.Charts.SalesDetail>
+                                        </div>
+                                    </div>
+                                 }*@
+                        </Container>
+                    }
+                </div>
+            </Container>
+        }
+    </Authorized>
+</AuthorizeView>
+

@@ -1,0 +1,56 @@
+﻿@page "/Charts/LikeForLikeTrend"
+@using IIS_V4.Data;
+@using Microsoft.AspNetCore.Authorization;
+@using Microsoft.AspNetCore.Identity;
+@using Blazorise.Localization;
+@using Blazorise;
+@using Blazorise.Charts;
+
+@inject TakingsService takingsService;
+<div class="card border shadow-0">
+    <div class="card-header bg-transparent">
+        LFL Yearly Profit Comparison By Day : @BranchName
+    </div>
+    <div class="card-body">
+        <div class="container-fluid">
+            <div class="box-body">
+                <BarChart @ref="@trendChart" Type="ChartType.Bar" TItem="double" OptionsObject="@trendChartOptions" Clicked="@OnClicked" />
+            </div>
+        </div>
+    </div>
+    <div class="card-footer bg-light text-lg-start border-top shadow-0">
+        <div class="table-responsive">
+            <table class="table table-sm table-hover table-bordered">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Profit</th>
+                        <th>Average Basket</th>
+                        <th>Averange Spend</th>
+                        <th>Total Quantity Sold</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        var dsale = daily_takings[RecordIndex];
+                        <tr>
+                            <td>@dsale.TransDate.ToShortDateString()</td>
+                            <td>@dsale.Profit.ToString("C2")</td>
+                            <td>@dsale.AverageBasket</td>
+                            <td>@dsale.AverageSpend.ToString("C2")</td>
+                            <td>@dsale.SumSellQty</td>
+                        </tr>
+                        var sale = lfl_daily_takings[RecordIndex];
+                        <tr>
+                            <td>@sale.TransDate.ToShortDateString()</td>
+                            <td>@sale.Profit.ToString("C2")</td>
+                            <td>@sale.AverageBasket</td>
+                            <td>@sale.AverageSpend.ToString("C2")</td>
+                            <td>@sale.SumSellQty</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,55 @@
+﻿@page "/Charts/DailyTakings"
+@using IIS_V4.Data;
+@using Microsoft.AspNetCore.Authorization;
+@using Microsoft.AspNetCore.Identity;
+@using Blazorise.Localization;
+@using Blazorise;
+@using Blazorise.Charts;
+@implements IDisposable;
+@inject TakingsService takingsService;
+
+<div class="card border shadow-0">
+    <div class="card-header bg-transparent">
+        Daily Takings : @BranchName
+        <NavLink class="card-link" href="@Link">
+            <span class="@Icon" aria-hidden="true" style="float:right;"></span>
+        </NavLink>
+    </div>
+
+    <div class="card-body">
+        <div class="container-fluid">
+            <div class="box-body">
+                <Chart @ref="profitPie" Type="ChartType.Pie" TItem="double" OptionsObject="@pieChartOptions" />
+            </div>
+        </div>
+    </div>
+
+    <div class="card-footer bg-light text-lg-start border-top shadow-0">
+        <div class="table-responsive">
+            <table class="table table-sm table-hover table-bordered">
+                <thead>
+                    <tr>
+                        <th>Total Takings</th>
+                        <th>Average Basket</th>
+                        <th>Averange Spend</th>
+                        <th>Total Quantity Sold</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var sale in daily_takings)
+                    {
+                        <tr>
+                            <td>@sale.SellNet.ToString("C2")</td>
+                            <td>@sale.AverageBasket</td>
+                            <td>@sale.AverageSpend.ToString("C2")</td>
+                            <td>@sale.SumSellQty</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+
